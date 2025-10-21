@@ -21,23 +21,18 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(glfw)
 
-# ---- GLAD (core profile, OpenGL 3.3) -----------------------------------
-# Generates a glad.c we compile into our target
-FetchContent_Declare(
-  glad
-  GIT_REPOSITORY https://github.com/Dav1dde/glad.git
-  GIT_TAG        v2.0.6
-)
-FetchContent_MakeAvailable(glad)   # provides glad target
-
 # ---- Our executable ----------------------------------------------------
 file(GLOB SRC CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/*.cpp")
 add_executable(${PROJECT_NAME} ${SRC})
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
-# Link libs (glfw + glad). CMake/GLFW handles platform specifics.
-target_link_libraries(${PROJECT_NAME} PRIVATE glfw glad)
+# Link libs (glfw only, we'll use system OpenGL)
+target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
+
+# Find OpenGL
+find_package(OpenGL REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE OpenGL::GL)
 
 # macOS: request a modern GL context and link frameworks via GLFW's props
 if(APPLE)

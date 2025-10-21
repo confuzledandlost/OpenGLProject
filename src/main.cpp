@@ -1,4 +1,4 @@
-#include <glad/gl.h>
+#include <GL/gl.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
 
@@ -22,10 +22,9 @@ int main() {
     if (!win) { std::cerr << "Failed to create window\n"; glfwTerminate(); return -1; }
     glfwMakeContextCurrent(win);
 
-    if (!gladLoadGL(glfwGetProcAddress)) {
-        std::cerr << "Failed to load GL\n"; return -1;
-    }
-    std::cout << "GL Version: " << GLVersion.major << "." << GLVersion.minor << "\n";
+    // Get OpenGL version info
+    const GLubyte* version = glGetString(GL_VERSION);
+    std::cout << "OpenGL Version: " << version << "\n";
 
     while (!glfwWindowShouldClose(win)) {
         glViewport(0, 0, 800, 600);
